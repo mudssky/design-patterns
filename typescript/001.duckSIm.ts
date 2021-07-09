@@ -75,3 +75,5 @@ class DuckCall extends Quack {}
 new MallardDuck().display()
 new ModelDuck().display()
 new DuckCall().quack()
+
+export {}
