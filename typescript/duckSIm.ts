@@ -67,8 +67,11 @@ class ModelDuck extends Duck {
     this.swim()
   }
 }
+
+class DuckCall extends Quack {}
 // const duck1 = new TestDuck()
 // duck1.performFly()
 // duck1.performQuack()
 new MallardDuck().display()
 new ModelDuck().display()
+new DuckCall().quack()
