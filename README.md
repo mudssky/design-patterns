@@ -25,11 +25,119 @@
 - Prototype
 - Singleton
 
+### 1.简单工厂模式(Simple Factory)
 
+#### 现实的例子
+
+想象你要造一所房子，你需要一些门，你可以自己准备木头,胶水,你的木匠装备等等，你也可以把工作外包给工厂，让外包制造好门直接交付给你，这样你就不用了解制造门的细节了，也不会因为在家里施工而搞得一团糟。
+
+#### 简单总结
+
+简单工厂模式封装了生成实例的方法，这样用户就可以直接调用这个方法，不需要知道创造实例的逻辑。
+
+#### 维基百科描述
+
+在面向对象编程(OOP)中，工厂是用于创建其他对象的对象，形式上工厂是一个函数或方法，它从某个方法调用中返回不同原型或类的对象（这样我们就不用new这些对象来手动创建了）
 
 ## 结构设计模式
 
 结构设计模式主要关注对象组合，换句话说，实体如何相互使用。或者另一种解释是，它们有助于回答“如何构建软件组件”
+
+### 1.装饰器模式（Decorator）
+
+#### 现实的例子
+
+假设你经营一家咖啡店，计算账单的时候需要根据添加的各种原料计算最终的成本，这个情况下，每个添加的原料可以作为装饰器
+
+（实际上碰到这种例子，查表就可以了吧，价格不必硬编码到程序里）
+
+#### 简单总结
+
+装饰器模式允许你通过用一个装饰器类包裹对象在运行时对一个对象动态添加行为
+
+#### 维基百科的解释
+
+在面向对象编程中，装饰器模式是一种设计模式，它允许将行为静态或动态地添加到单个对象中，而不会影响来自同一类的其他对象的行为。decorator模式对于遵循单一职责原则通常很有用，因为它允许在具有唯一关注区域的类之间划分功能。
+
+#### typescript example
+
+下面时coffee例子的
+
+```typescript
+interface Coffee {
+  getCost(): number
+  getDescription(): string
+}
+
+class SimpleCoffee implements Coffee {
+  getCost() {
+    return 10
+  }
+  getDescription() {
+    return 'simple coffee'
+  }
+}
+
+class MilkDecorator implements Coffee {
+  protected coffee: Coffee
+  protected description: string
+  constructor(c: Coffee) {
+    this.coffee = c
+    this.description = 'milk'
+  }
+  getCost() {
+    return 4 + this.coffee.getCost()
+  }
+  getDescription() {
+    return this.coffee.getDescription() + ' ' + this.description
+  }
+}
+class WhipDecorator implements Coffee {
+  protected coffee: Coffee
+  protected description: string
+  constructor(c: Coffee) {
+    this.coffee = c
+    this.description = 'whip'
+  }
+  getCost() {
+    return 5 + this.coffee.getCost()
+  }
+  getDescription() {
+    return this.coffee.getDescription() + ' ' + this.description
+  }
+}
+// 香草
+class VanillaDecorator implements Coffee {
+  protected coffee: Coffee
+  protected description: string
+  constructor(c: Coffee) {
+    this.coffee = c
+    this.description = 'vanilla'
+  }
+  getCost() {
+    return 3 + this.coffee.getCost()
+  }
+  getDescription() {
+    return this.coffee.getDescription() + ' ' + this.description
+  }
+}
+
+const simpleCoffee = new SimpleCoffee()
+console.log(simpleCoffee.getDescription())
+console.log(simpleCoffee.getCost())
+
+const milkCoffee = new MilkDecorator(simpleCoffee)
+console.log(milkCoffee.getDescription())
+console.log(milkCoffee.getCost())
+
+const mixCoffee = new VanillaDecorator(
+  new MilkDecorator(new WhipDecorator(simpleCoffee))
+)
+
+console.log(mixCoffee.getDescription())
+console.log(mixCoffee.getCost())
+export{}
+```
 
 
 
@@ -58,7 +166,7 @@
 
 举一个排序的例子，我们首先实现了冒泡排序，但是随着数据量的增长我们发现冒泡排序的效率变得很慢，为此，我们又实现了快速排序处理大数据，但是这个快速排序处理小规模数据的效率比较低，所以为了处理这个问题，我们又实现了一个针对小规模数据的策略，使得在大规模数据上使用快速排序，小规模数据使用冒泡排序。
 
-#### 说人话
+#### 简单总结
 
 策略模式允许您根据情况切换算法或策略
 
@@ -337,7 +445,7 @@ main(List<String> args) {
 
 
 
-### 说人话
+### 简单总结
 
 建立对象间的依赖关系，使得一个对象的状态发生改变时，所有依赖它的对象都能被通知到。
 
