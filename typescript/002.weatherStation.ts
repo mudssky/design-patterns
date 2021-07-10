@@ -12,7 +12,7 @@ interface DisplayElement {
   display(): void
 }
 
-class WeatherDate implements Subject {
+class WeatherData implements Subject {
   private observers: Array<Observer>
   private temperature!: number
   private humidity!: number
@@ -81,9 +81,11 @@ class StatisticsConditionDisplay implements Observer, DisplayElement {
     console.log(`Statistics conditionsc: ${this.pressure} pressure`)
   }
 }
-const wd = new WeatherDate()
+const wd = new WeatherData()
 const ccd = new CurrentConditionDisplay(wd)
 const scd = new StatisticsConditionDisplay(wd)
 wd.setMeasurements(80, 65, 30.4)
 wd.setMeasurements(82, 75, 28.3)
 wd.setMeasurements(78, 90, 36.4)
+
+export {}

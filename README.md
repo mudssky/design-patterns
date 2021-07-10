@@ -39,9 +39,20 @@
 
 行为设计模式涉及到对象之间的职责分配，和结构模式的不同之处在于，它不仅指定了结构，而且概述了消息传递的模式，换句话说，这有助于回答“如何在软件组织中运行一个行为”。
 
+这里介绍以下几种:
 
+- Chain of Responsibility
+- Command
+- Iterator
+- Mediator
+- Memento
+- Observer
+- Visitor
+- Strategy
+- State
+- Template Method
 
-### 1.策略模式
+### 1.策略模式(Strategy)
 
 #### 现实例子
 
@@ -312,6 +323,335 @@ main(List<String> args) {
   sort1.doSort([1, 2, 3]);
   var sort2 = Sorter(QuickSortStrategy());
   sort2.doSort([1, 2, 3]);
+}
+
+```
+
+
+
+### 2.观察者模式(Observer)
+
+#### 现实例子
+
+也叫做发布订阅模式,这里给出的例子是,求职者订阅了招聘网站的服务,如果有匹配的工作信息,招聘网站会进行推送
+
+
+
+### 说人话
+
+建立对象间的依赖关系，使得一个对象的状态发生改变时，所有依赖它的对象都能被通知到。
+
+
+
+### 维基百科的描述
+
+观察者模式是一种软件设计模式，在这种模式中，一个称为主体的对象维护一个称为观察者的依赖项列表，并在任何状态更改时自动通知它们(通常通过调用它们的一个方法)。
+
+
+
+### typescript example
+
+
+
+```typescript
+interface Subject {
+  registerObserver(o: Observer): void
+  removeObserver(o: Observer): void
+  notifyObservers(info: any): void
+}
+
+interface Observer {
+  update(s: Subject, arg: Object): void
+}
+
+class JobInfo {
+  protected info: string
+  constructor(info: string) {
+    this.info = info
+  }
+  getInfo() {
+    return this.info
+  }
+}
+
+class JobSite implements Subject {
+  protected observers: Array<Observer>
+  constructor() {
+    this.observers = Array<Observer>()
+  }
+  registerObserver(o: Observer): void {
+    this.observers.push(o)
+  }
+  removeObserver(o: Observer): void {
+    const index = this.observers.indexOf(o)
+    this.observers.splice(index, 1)
+  }
+  notifyObservers(info: JobInfo): void {
+    for (const o of this.observers) {
+      o.update(this, info)
+    }
+  }
+
+  AddJob(info: JobInfo) {
+    console.log('招聘网站有新的工作追加了')
+
+    this.notifyObservers(info)
+  }
+}
+
+class Jiucai implements Observer {
+  name: string
+  constructor(name: string) {
+    this.name = name
+  }
+  update(s: Subject, arg: JobInfo): void {
+    console.log(`${this.name}收到新工作推送，职位是${arg.getInfo()}`)
+  }
+}
+
+const zibenjia = new JobSite()
+
+const jiucai1 = new Jiucai('生命1号')
+const jiucai2 = new Jiucai('脑白金')
+
+zibenjia.registerObserver(jiucai1)
+zibenjia.registerObserver(jiucai2)
+
+zibenjia.AddJob(new JobInfo('web前端'))
+zibenjia.AddJob(new JobInfo('算法工程师'))
+
+```
+
+下面是head first设计模式这本书里面关于气象站和告示板的typescript代码实现
+
+```typescript
+interface Subject {
+  registerObserver(o: Observer): void
+  removeObserver(o: Observer): void
+  notifyObservers(): void
+}
+
+interface Observer {
+  update(temp: number, humidity: number, pressure: number): void
+}
+
+interface DisplayElement {
+  display(): void
+}
+
+class WeatherData implements Subject {
+  private observers: Array<Observer>
+  private temperature!: number
+  private humidity!: number
+  private pressure!: number
+  constructor() {
+    this.observers = Array<Observer>()
+  }
+  registerObserver(o: Observer): void {
+    this.observers.push(o)
+  }
+  removeObserver(o: Observer): void {
+    const index = this.observers.indexOf(o)
+    this.observers.splice(index, 1)
+  }
+  notifyObservers(): void {
+    for (const o of this.observers) {
+      o.update(this.temperature, this.humidity, this.pressure)
+    }
+  }
+
+  measurementsChanged() {
+    this.notifyObservers()
+  }
+  setMeasurements(temperature: number, humidity: number, pressure: number) {
+    this.temperature = temperature
+    this.humidity = humidity
+    this.pressure = pressure
+    this.measurementsChanged()
+  }
+}
+
+class CurrentConditionDisplay implements Observer, DisplayElement {
+  private temperature!: number
+  private humidity!: number
+  private weatherData: Subject
+  constructor(weatherData: Subject) {
+    this.weatherData = weatherData
+    this.weatherData.registerObserver(this)
+  }
+  update(temp: number, humidity: number, pressure: number): void {
+    this.temperature = temp
+    this.humidity = humidity
+    this.display()
+  }
+
+  display(): void {
+    console.log(
+      `Current conditionsc: ${this.temperature} F degrees and ${this.humidity}% humidity`
+    )
+  }
+}
+
+class StatisticsConditionDisplay implements Observer, DisplayElement {
+  private pressure!: number
+  private weatherData: Subject
+  constructor(weatherData: Subject) {
+    this.weatherData = weatherData
+    this.weatherData.registerObserver(this)
+  }
+  update(temp: number, humidity: number, pressure: number): void {
+    this.pressure = pressure
+    this.display()
+  }
+
+  display(): void {
+    console.log(`Statistics conditionsc: ${this.pressure} pressure`)
+  }
+}
+const wd = new WeatherData()
+const ccd = new CurrentConditionDisplay(wd)
+const scd = new StatisticsConditionDisplay(wd)
+wd.setMeasurements(80, 65, 30.4)
+wd.setMeasurements(82, 75, 28.3)
+wd.setMeasurements(78, 90, 36.4)
+
+export {}
+
+```
+
+
+
+
+
+### dart example
+
+dart中Object不想typescript一样可以接受任何其他类。
+
+所以我这里对observer 用了泛型。
+
+```dart
+abstract class Observer<T> {
+  void update(Subject s, T o);
+}
+
+abstract class Subject {
+  void registerObserver(Observer o);
+  void removeObserver(Observer o);
+  void notifyObservers(Object o);
+}
+
+class JobInfo {
+  late String info;
+  JobInfo(this.info);
+}
+
+class JobSite implements Subject {
+  final List<Observer> observers = [];
+
+  @override
+  void registerObserver(Observer o) {
+    this.observers.add(o);
+  }
+
+  @override
+  void removeObserver(Observer o) {
+    this.observers.remove(o);
+  }
+
+  @override
+  void notifyObservers(Object o) {
+    for (var item in this.observers) {
+      item.update(this, o);
+    }
+  }
+
+  void addJobInfo(JobInfo j) {
+    print('有新的工作信息');
+    this.notifyObservers(j);
+  }
+}
+
+class Jiucai implements Observer<JobInfo> {
+  final String name;
+
+  Jiucai(this.name);
+  @override
+  void update(Subject s, JobInfo o) {
+    print("$name收到新的工作推送，职位是${o.info}");
+  }
+}
+
+main(List<String> args) {
+  var zibenjia = JobSite();
+
+  var jiucai1 = Jiucai('李白');
+  var jiucai2 = Jiucai('白居易');
+
+  zibenjia.registerObserver(jiucai1);
+  zibenjia.registerObserver(jiucai2);
+  zibenjia.addJobInfo(JobInfo('AI工程师'));
+}
+
+```
+
+### golang example
+
+```go
+package main
+
+import "fmt"
+
+type Subject interface {
+	registerObserver(o Observer)
+	removeObserver(o Observer)
+	notifyObservers(s Subject, o interface{})
+}
+
+type Observer interface {
+	update(s Subject, o interface{})
+}
+
+type JobSite struct {
+	observers []Observer
+}
+
+func (j *JobSite) registerObserver(o Observer) {
+	j.observers = append(j.observers, o)
+}
+
+func (j *JobSite) removeObserver(o Observer) {
+	for i := 0; i < len(j.observers); i++ {
+		if o == j.observers[i] {
+			j.observers = append(j.observers[:i], j.observers[i+1:]...)
+			return
+		}
+	}
+}
+func (j *JobSite) notifyObservers(s Subject, o interface{}) {
+	for i := 0; i < len(j.observers); i++ {
+		j.observers[i].update(s, o)
+	}
+}
+func (j *JobSite) addJobInfo(info string) {
+	fmt.Println("新工作信息入库")
+	j.notifyObservers(j, info)
+}
+
+type Jiucai struct {
+	name string
+}
+
+func (j *Jiucai) update(s Subject, o interface{}) {
+	fmt.Printf("%s收到新的工作推送，职位是%v\n", j.name, o)
+}
+func main() {
+	zibenjia := JobSite{observers: []Observer{}}
+	jiucai1 := Jiucai{name: "张三"}
+	jiucai2 := Jiucai{name: "李四"}
+	zibenjia.registerObserver(&jiucai1)
+	zibenjia.registerObserver(&jiucai2)
+	zibenjia.addJobInfo("喝牛奶")
+
 }
 
 ```

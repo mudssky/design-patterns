@@ -1,31 +1,32 @@
 "use strict";
-var WeatherDate = /** @class */ (function () {
-    function WeatherDate() {
+Object.defineProperty(exports, "__esModule", { value: true });
+var WeatherData = /** @class */ (function () {
+    function WeatherData() {
         this.observers = Array();
     }
-    WeatherDate.prototype.registerObserver = function (o) {
+    WeatherData.prototype.registerObserver = function (o) {
         this.observers.push(o);
     };
-    WeatherDate.prototype.removeObserver = function (o) {
+    WeatherData.prototype.removeObserver = function (o) {
         var index = this.observers.indexOf(o);
         this.observers.splice(index, 1);
     };
-    WeatherDate.prototype.notifyObservers = function () {
+    WeatherData.prototype.notifyObservers = function () {
         for (var _i = 0, _a = this.observers; _i < _a.length; _i++) {
             var o = _a[_i];
             o.update(this.temperature, this.humidity, this.pressure);
         }
     };
-    WeatherDate.prototype.measurementsChanged = function () {
+    WeatherData.prototype.measurementsChanged = function () {
         this.notifyObservers();
     };
-    WeatherDate.prototype.setMeasurements = function (temperature, humidity, pressure) {
+    WeatherData.prototype.setMeasurements = function (temperature, humidity, pressure) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.pressure = pressure;
         this.measurementsChanged();
     };
-    return WeatherDate;
+    return WeatherData;
 }());
 var CurrentConditionDisplay = /** @class */ (function () {
     function CurrentConditionDisplay(weatherData) {
@@ -56,7 +57,7 @@ var StatisticsConditionDisplay = /** @class */ (function () {
     };
     return StatisticsConditionDisplay;
 }());
-var wd = new WeatherDate();
+var wd = new WeatherData();
 var ccd = new CurrentConditionDisplay(wd);
 var scd = new StatisticsConditionDisplay(wd);
 wd.setMeasurements(80, 65, 30.4);
