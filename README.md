@@ -1239,3 +1239,102 @@ func main() {
 
 ```
 
+
+
+## 3.👮命令模式 Command
+
+#### 真实世界的例子
+
+一个例子是餐馆点餐， 您（即客户）询问服务员（即，调用者）携带一些食物（即命令）和服务员只需将该请求转发给厨师（即接收者），该请求具有关于烹饪的内容和如何烹饪的知识。 另一个例子是您（即客户端）使用遥控器（即，Command）的电视（即，接收器）打开（即，接收器）。
+
+#### 简单总结
+
+允许您在对象中封装动作。此模式背后的关键思想是提供分离客户机与接收者的方法。
+
+#### 维基百科的解释
+
+在面向对象编程中，命令模式是一种行为设计模式，在这种模式中，一个对象被用来封装在以后执行一个动作或触发一个事件所需的所有信息。该信息包括方法名、拥有该方法的对象和方法参数的值。
+
+#### 优缺点
+
+**优点**
+
+- *单一职责原则*。 你可以解耦触发和执行操作的类。
+-  *开闭原则*。 你可以在不修改已有客户端代码的情况下在程序中创建新的命令。
+-  你可以实现撤销和恢复功能。
+-  你可以实现操作的延迟执行。
+-  你可以将一组简单命令组合成一个复杂命令。
+
+**缺点**
+
+-  代码可能会变得更加复杂， 因为你在发送者和接收者之间增加了一个全新的层次。
+
+#### typescript example
+
+下面是一个遥控器控制灯泡开关的实现。
+
+```typescript
+// 灯泡
+class Bulb {
+  turnOn() {
+    console.log('Bulb has been lit')
+  }
+  turnOff() {
+    console.log('be dark')
+  }
+}
+
+interface Command {
+  execute(): void
+  undo(): void
+  redo(): void
+}
+
+class TurnOn implements Command {
+  protected bulb: Bulb
+  constructor(bulb: Bulb) {
+    this.bulb = bulb
+  }
+  execute(): void {
+    this.bulb.turnOn()
+  }
+  undo(): void {
+    this.bulb.turnOff()
+  }
+  redo(): void {
+    this.execute()
+  }
+}
+class TurnOff implements Command {
+  protected bulb: Bulb
+  constructor(bulb: Bulb) {
+    this.bulb = bulb
+  }
+  execute(): void {
+    this.bulb.turnOff()
+  }
+  undo(): void {
+    this.bulb.turnOn()
+  }
+  redo(): void {
+    this.execute()
+  }
+}
+
+class RemoteControl {
+  submit(command: Command) {
+    command.execute()
+  }
+}
+
+const bulb = new Bulb()
+
+const turnOn = new TurnOn(bulb)
+const turnOff = new TurnOff(bulb)
+
+const remote = new RemoteControl()
+remote.submit(turnOn)
+remote.submit(turnOff)
+
+```
+
