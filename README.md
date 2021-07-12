@@ -756,6 +756,8 @@ computer.turnOff()
 
 每个组织都是由员工组成的。每个员工都有相同的特征，比如有薪水，有一些职责，可能有也可能没有向某人汇报，可能有也可能没有下属等等。
 
+大部分国家的军队都采用层次结构管理。 每支部队包括几个师， 师由旅构成， 旅由团构成， 团可以继续划分为排。 最后， 每个排由一小队实实在在的士兵组成。 军事命令由最高层下达， 通过每个层级传递， 直到每位士兵都知道自己应该服从的命令。
+
 #### 简单总结
 
 **组合模式**是一种结构型设计模式， 你可以使用它将对象组合成树状结构， 并且能像使用独立对象一样使用它们。
@@ -1948,5 +1950,92 @@ while (reverseIterator.valid()) {
 }
 ```
 
+### 6.💢 状态模式(State)
 
+#### 现实的例子
+
+假设您正在使用一些绘图应用程序，您选择画笔进行绘制。现在笔刷会根据选择的颜色改变它的行为，例如，如果你选择了红色，它就会以红色绘制，如果是蓝色，它就会以蓝色绘制，等等。
+
+智能手机的按键和开关会根据设备当前状态完成不同行为：
+
+- 当手机处于解锁状态时， 按下按键将执行各种功能。
+- 当手机处于锁定状态时， 按下任何按键都将解锁屏幕。
+- 当手机电量不足时， 按下任何按键都将显示充电页面。
+
+#### 简单总结
+
+**状态模式**是一种行为设计模式， 让你能在一个对象的内部状态变化时改变其行为， 使其看上去就像改变了自身所属的类一样。
+
+#### 维基百科的解释
+
+状态模式是一种行为软件设计模式，其以面向对象方式实现状态机。 利用状态模式，通过将每个单独的状态作为状态模式接口的派生类实现每个单独的状态来实现状态机，并通过调用由模式的超类定义的方法来实现状态转换。 状态模式可以被解释为能够通过模式接口中定义的方法的调用来切换当前策略的策略模式。
+
+#### 优缺点
+
+**优点**
+
+-  *单一职责原则*。 将与特定状态相关的代码放在单独的类中。
+-  *开闭原则*。 无需修改已有状态类和上下文就能引入新状态。
+-  通过消除臃肿的状态机条件语句简化上下文代码。
+
+**缺点**
+
+-  如果状态机只有很少的几个状态， 或者很少发生改变， 那么应用该模式可能会显得小题大作。
+
+#### 与其他模式的关系
+
+- **桥接模式**、 **状态模式**和**策略模式** （在某种程度上包括适配器模式） 模式的接口非常相似。 实际上， 它们都基于组合模式——即将工作委派给其他对象， 不过也各自解决了不同的问题。 模式并不只是以特定方式组织代码的配方， 你还可以使用它们来和其他开发者讨论模式所解决的问题。
+
+- 状态可被视为策略的扩展。 两者都基于组合机制： 它们都通过将部分工作委派给 “帮手” 对象来改变其在不同情景下的行为。 策略使得这些对象相互之间完全独立， 它们不知道其他对象的存在。 但状态模式没有限制具体状态之间的依赖， 且允许它们自行改变在不同情景下的状态。
+
+#### typescript example
+
+让我们举一个文本编辑器的例子，它可以让你改变输入的文本的状态，例如，如果你选择了粗体，它就开始写粗体，如果是斜体，然后是斜体等等。
+
+```typescript
+interface WritingState {
+  write(words: string): void
+}
+
+class UpperCase implements WritingState {
+  write(words: string): void {
+    console.log(`Uppercase:${words}`)
+  }
+}
+
+class LowerCase implements WritingState {
+  write(words: string): void {
+    console.log(`Lowercase:${words}`)
+  }
+}
+
+class DefaultText implements WritingState {
+  write(words: string): void {
+    console.log(`DefaultText:${words}`)
+  }
+}
+
+class TextEditor {
+  protected state: WritingState
+  constructor(state: WritingState) {
+    this.state = state
+  }
+  setState(state: WritingState) {
+    this.state = state
+  }
+  type(words: string) {
+    this.state.write(words)
+  }
+}
+
+const editor = new TextEditor(new DefaultText())
+editor.type('hello')
+editor.setState(new UpperCase())
+editor.type('1')
+
+editor.setState(new LowerCase())
+
+editor.type('2')
+
+```
 
