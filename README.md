@@ -553,6 +553,76 @@ const burger = new BurgerBuilder(14).addCheese().addPepperoni().build()
 
 ```
 
+## 6.🐑原型模式(Prototype)
+
+#### 现实的例子
+
+还记得多莉?那只克隆羊!我们就不谈细节了，但这里的关键是这都是关于克隆的
+
+#### 简单总结
+
+**原型模式**是一种创建型设计模式， 使你能够复制已有对象， 而又无需使代码依赖它们所属的类。
+
+#### 适合的使用场景
+
+**如果你需要复制一些对象， 同时又希望代码独立于这些对象所属的具体类， 可以使用原型模式。**
+
+ 这一点考量通常出现在代码需要处理第三方代码通过接口传递过来的对象时。 即使不考虑代码耦合的情况， 你的代码也不能依赖这些对象所属的具体类， 因为你不知道它们的具体信息。
+
+原型模式为客户端代码提供一个通用接口， 客户端代码可通过这一接口与所有实现了克隆的对象进行交互， 它也使得客户端代码与其所克隆的对象具体类独立开来。
+
+
+
+ **如果子类的区别仅在于其对象的初始化方式， 那么你可以使用该模式来减少子类的数量。 别人创建这些子类的目的可能是为了创建特定类型的对象。**
+
+ 在原型模式中， 你可以使用一系列预生成的、 各种类型的对象作为原型。
+
+客户端不必根据需求对子类进行实例化， 只需找到合适的原型并对其进行克隆即可。
+
+#### 优缺点
+
+**优点**
+
+- 你可以克隆对象， 而无需与它们所属的具体类相耦合。
+-  你可以克隆预生成原型， 避免反复运行初始化代码。
+-  你可以更方便地生成复杂对象。
+-  你可以用继承以外的方式来处理复杂对象的不同配置。
+
+**缺点**
+
+-  克隆包含循环引用的复杂对象可能会非常麻烦。
+
+#### typescript example
+
+```typescript
+class Sheep {
+  protected name: string
+  protected category: string
+  constructor(name: string, category = 'Mountain Sheep') {
+    this.name = name
+    this.category = category
+  }
+  setName(name: string) {
+    this.name = name
+  }
+  getName() {
+    return this.name
+  }
+  setCategory(category: string) {
+    this.category = category
+  }
+  getCategory() {
+    return this.category
+  }
+}
+
+const original = new Sheep('Jolly')
+console.log(`name:${original.getName()}, category: ${original.getCategory()}`)
+
+// 需要调用一个深拷贝方法，js原生并没有这种方法
+
+```
+
 
 
 ## 结构设计模式
