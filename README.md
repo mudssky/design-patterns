@@ -555,6 +555,8 @@ const burger = new BurgerBuilder(14).addCheese().addPepperoni().build()
 
 ## 6.🐑原型模式(Prototype)
 
+**亦称：** 克隆、Clone
+
 #### 现实的例子
 
 还记得多莉?那只克隆羊!我们就不谈细节了，但这里的关键是这都是关于克隆的
@@ -2669,5 +2671,87 @@ export {}
 
 ```
 
+### 10.🏃访问者模式(Visitor)
 
+#### 现实的例子
+
+考虑一下去迪拜旅游的人。他们只需要一种方式(即签证)进入迪拜。到达后，他们可以自己来参观迪拜的任何地方，而不需要申请许可或行走一大段距离来参观这里的任何地方;只要让他们知道一个地方，他们就可以去参观。访客模式可以让你做到这一点，它可以帮助你添加要参观的地方，这样他们可以尽可能多地参观，而不必做任何跑腿的工作
+
+#### 简单总结
+
+**访问者模式**是一种行为设计模式， 它能将算法与其所作用的对象隔离开来。
+
+#### 优缺点
+
+**优点**
+
+- *开闭原则*。 你可以引入在不同类对象上执行的新行为， 且无需对这些类做出修改。
+-  *单一职责原则*。 可将同一行为的不同版本移到同一个类中。
+-  访问者对象可以在与各种对象交互时收集一些有用的信息。 当你想要遍历一些复杂的对象结构 （例如对象树）， 并在结构中的每个对象上应用访问者时， 这些信息可能会有所帮助。
+
+**缺点**
+
+-  每次在元素层次结构中添加或移除一个类时， 你都要更新所有的访问者。
+-  在访问者同某个元素进行交互时， 它们可能没有访问元素私有成员变量和方法的必要权限。
+
+#### typescript example
+
+```typescript
+interface Animal {
+  accept(operation: AnimalOperation): void
+}
+
+interface AnimalOperation {
+  visitMonkey(monkey: Monkey): void
+  visitLion(lion: Lion): void
+  visitDolphin(dolphin: Dolphin): void
+}
+
+class Monkey implements Animal {
+  shout() {
+    console.log('Ooh oo aa aa!')
+  }
+  accept(operation: AnimalOperation) {
+    operation.visitMonkey(this)
+  }
+}
+
+class Lion implements Animal {
+  accept(operation: AnimalOperation): void {
+    operation.visitLion(this)
+  }
+  roar() {
+    console.log('Roaaar!')
+  }
+}
+class Dolphin implements Animal {
+  accept(operation: AnimalOperation): void {
+    operation.visitDolphin(this)
+  }
+  speak() {
+    console.log('Tuut tuttu tuutt')
+  }
+}
+
+class Speak implements AnimalOperation {
+  visitMonkey(monkey: Monkey): void {
+    monkey.shout()
+  }
+  visitLion(lion: Lion): void {
+    lion.roar()
+  }
+  visitDolphin(dolphin: Dolphin): void {
+    dolphin.speak()
+  }
+}
+
+const monkey = new Monkey()
+const lion = new Lion()
+const dolphin = new Dolphin()
+const speak = new Speak()
+monkey.accept(speak)
+lion.accept(speak)
+dolphin.accept(speak)
+export {}
+```
 
