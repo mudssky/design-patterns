@@ -1021,6 +1021,114 @@ door.open('123456')
 door.close()
 ```
 
+### 6🚡 桥接模式(Bridge)
+
+#### 现实的例子
+
+假设你有一个有不同页面的网站，你应该允许用户更改主题。你会怎么做?为每个主题创建每个页面的多个副本，还是只创建单独的主题并根据用户的偏好加载它们?桥牌模式允许你做后者，如下图
+
+![With and without the bridge pattern](assets/bridge.png)
+
+
+
+假如你有一个几何 `形状`Shape类， 从它能扩展出两个子类：  `圆形`Circle和 `方形`Square 。 你希望对这样的类层次结构进行扩展以使其包含颜色， 所以你打算创建名为 `红色`Red和 `蓝色`Blue的形状子类。 但是， 由于你已有两个子类， 所以总共需要创建四个类才能覆盖所有组合， 例如 `蓝色圆形`Blue­Circle和 `红色方形`Red­Square 。
+
+![桥接模式解决的问题](assets/problem-zh-1626081144583.png)
+
+所有组合类的数量将以几何级数增长。
+
+在层次结构中新增形状和颜色将导致代码复杂程度指数增长。 例如添加三角形状， 你需要新增两个子类， 也就是每种颜色一个； 此后新增一种新颜色需要新增三个子类， 即每种形状一个。 如此以往， 情况会越来越糟糕。
+
+问题的根本原因是我们试图在两个独立的维度——形状与颜色——上扩展形状类。 这在处理类继承时是很常见的问题。
+
+桥接模式通过将继承改为组合的方式来解决这个问题。 具体来说， 就是抽取其中一个维度并使之成为独立的类层次， 这样就可以在初始类中引用这个新层次的对象， 从而使得一个类不必拥有所有的状态和行为。
+
+![桥接模式的解决方案](assets/solution-zh.png)
+
+将一个类层次转化为多个相关的类层次， 避免单个类层次的失控。
+
+根据该方法， 我们可以将颜色相关的代码抽取到拥有 `红色`和 `蓝色`两个子类的颜色类中， 然后在 `形状`类中添加一个指向某一颜色对象的引用成员变量。 现在， 形状类可以将所有与颜色相关的工作委派给连入的颜色对象。 这样的引用就成为了 `形状`和 `颜色`之间的桥梁。 此后， 新增颜色将不再需要修改形状的类层次， 反之亦然。
+#### 简单总结
+
+**桥接模式**是一种结构型设计模式， 可将一个大类或一系列紧密相关的类拆分为抽象和实现两个独立的层次结构， 从而能在开发时分别使用。
+
+#### 优缺点
+
+**优点**
+
+- 你可以创建与平台无关的类和程序。
+-  客户端代码仅与高层抽象部分进行互动， 不会接触到平台的详细信息。
+-  *开闭原则*。 你可以新增抽象部分和实现部分， 且它们之间不会相互影响。
+-  *单一职责原则*。 抽象部分专注于处理高层逻辑， 实现部分处理平台细节。
+
+**缺点**
+
+-  对高内聚的类使用该模式可能会让代码更加复杂。
+
+#### typescript example
+
+这里实现那个网页换主题的例子
+
+```typescript
+abstract class WebPage {
+  protected abstract theme: Theme
+
+  abstract getContent(): string
+}
+
+class About extends WebPage {
+  protected theme: Theme
+  constructor(theme: Theme) {
+    super()
+    this.theme = theme
+  }
+  getContent(): string {
+    return `about page in ${this.theme.getColor()}`
+  }
+}
+
+interface Theme {
+  getColor(): string
+}
+
+class Careers extends WebPage {
+  protected theme: Theme
+  constructor(theme: Theme) {
+    super()
+    this.theme = theme
+  }
+  getContent() {
+    return `careers page in ${this.theme.getColor()}`
+  }
+}
+
+class DarkTheme implements Theme {
+  getColor(): string {
+    return 'Dark Black'
+  }
+}
+
+class LightTheme implements Theme {
+  getColor(): string {
+    return 'Off white'
+  }
+}
+
+class AquaTheme implements Theme {
+  getColor(): string {
+    return 'Light blue'
+  }
+}
+
+const darkTheme = new DarkTheme()
+const about = new About(darkTheme)
+const careers = new Careers(darkTheme)
+console.log(about.getContent())
+console.log(careers.getContent())
+
+```
+
+
 
 
 ## 行为设计模式
