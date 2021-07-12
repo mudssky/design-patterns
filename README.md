@@ -423,7 +423,7 @@ export {}
 
 ```
 
-## 4.💍单例模式(Singleton)
+### 4.💍单例模式(Singleton)
 
 ### 现实的例子
 
@@ -592,7 +592,79 @@ console.log(mixCoffee.getCost())
 export{}
 ```
 
+### 2.🔌 适配器模式(Adapter)
 
+#### 现实的例子
+
+考虑到你的记忆卡中有一些图片，你需要把它们转移到你的电脑上。为了传输它们，你需要某种适配器，它与你的计算机端口兼容，这样你就可以把存储卡连接到你的计算机上。在这种情况下，读卡器是一个适配器。另一个例子是著名的电源适配器;三脚插头不能连接到两个尖头插座，它需要使用电源适配器，使其兼容两个尖头插座。还有一个例子是译者将一个人说的话翻译给另一个人
+
+#### 简单总结
+
+适配器模式允许您在适配器中包装其他不兼容的对象以使其与另一个类兼容。
+
+#### 维基百科的描述
+
+在软件工程中，适配器模式是一种软件设计模式，它允许将现有类的接口用作另一个接口。它通常用于使现有的类与其他类一起工作，而不修改它们的源代码。
+
+#### 优缺点
+
+**优点**
+
+-  _单一职责原则_你可以将接口或数据转换代码从程序主要业务逻辑中分离。
+-  *开闭原则*。 只要客户端代码通过客户端接口与适配器进行交互， 你就能在不修改现有客户端代码的情况下在程序中添加新类型的适配器。
+
+**缺点**
+
+-  代码整体复杂度增加， 因为你需要新增一系列接口和类。 有时直接更改服务类使其与其他代码兼容会更简单。
+
+#### typescript example
+
+想象一个猎人猎杀式子的游戏,现在我们加入狗,同时用适配器模式让猎人的猎人模块兼容狗
+
+```typescript
+interface Lion {
+  roar(): void
+}
+
+class AfricanLion implements Lion {
+  roar(): void {
+    console.log('aouuuuuuuu!')
+  }
+}
+class AsianLion implements Lion {
+  roar(): void {
+    console.log('aooooooooooo!')
+  }
+}
+
+class Hunter {
+  hunt(lion: Lion) {
+    lion.roar()
+  }
+}
+
+class WildDog {
+  bark(): void {
+    console.log('wang!wang!wang!')
+  }
+}
+
+class WildDogAdapter implements Lion {
+  protected dog
+  constructor(dog: WildDog) {
+    this.dog = dog
+  }
+  roar(): void {
+    this.dog.bark()
+  }
+}
+
+const wildDog = new WildDog()
+const wildDogAdapter = new WildDogAdapter(wildDog)
+const hunter = new Hunter()
+hunter.hunt(wildDogAdapter)
+
+```
 
 
 
@@ -1241,7 +1313,7 @@ func main() {
 
 
 
-## 3.👮命令模式 Command
+### 3.👮命令模式 Command
 
 #### 真实世界的例子
 
