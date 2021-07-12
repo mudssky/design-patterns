@@ -2521,3 +2521,83 @@ john.send('hi,its me')
 jane.send('hey!')
 ```
 
+### 9.💾备忘录模式(Memento)
+
+**亦称：** 快照、Snapshot
+
+#### 现实的例子
+
+以计算器为例，无论何时你执行一些计算，最后的计算都会保存在内存中，这样你就可以使用某些操作按钮返回计算器并恢复它。
+
+#### 简单总结
+
+**备忘录模式**是一种行为设计模式， 允许在不暴露对象实现细节的情况下保存和恢复对象之前的状态。
+
+#### 适合的使用场景
+
+ 当你需要创建对象状态快照来恢复其之前的状态时， 可以使用备忘录模式。
+
+ 备忘录模式允许你复制对象中的全部状态 （包括私有成员变量）， 并将其独立于对象进行保存。 尽管大部分人因为 “撤销” 这个用例才记得该模式， 但其实它在处理事务 （比如需要在出现错误时回滚一个操作） 的过程中也必不可少。
+
+ 当直接访问对象的成员变量、 获取器或设置器将导致封装被突破时， 可以使用该模式。
+
+ 备忘录让对象自行负责创建其状态的快照。 任何其他对象都不能读取快照， 这有效地保障了数据的安全性。
+
+#### 优缺点
+
+**优点**
+
+-  你可以在不破坏对象封装情况的前提下创建对象状态快照。
+-  你可以通过让负责人维护原发器状态历史记录来简化原发器代码。
+
+**缺点**
+
+-  如果客户端过于频繁地创建备忘录， 程序将消耗大量内存。
+-  负责人必须完整跟踪原发器的生命周期， 这样才能销毁弃用的备忘录。
+-  绝大部分动态编程语言 （例如 PHP、 Python 和 JavaScript） 不能确保备忘录中的状态不被修改。
+
+#### typescript example
+
+```typescript
+class EditorMemento {
+  protected content: string
+  constructor(content: string) {
+    this.content = content
+  }
+  getContent() {
+    return this.content
+  }
+}
+
+class Editor {
+  protected content = ''
+  type(words: string) {
+    this.content = this.content + words
+  }
+  getContent() {
+    return this.content
+  }
+  save() {
+    return new EditorMemento(this.content)
+  }
+  restore(memento: EditorMemento) {
+    this.content = memento.getContent()
+  }
+}
+
+const editor = new Editor()
+editor.type('first sentence\n')
+editor.type('this is second\n')
+const saved = editor.save()
+
+editor.type('third\n')
+console.log(editor.getContent())
+editor.restore(saved)
+console.log(editor.getContent())
+
+export {}
+
+```
+
+
+
