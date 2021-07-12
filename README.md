@@ -1586,3 +1586,176 @@ iosBuilder.build()
 
 ```
 
+### 5.迭代器模式➿ (Iterator)
+
+#### 现实的例子
+
+一个旧的收音机将是迭代器的一个很好的例子，用户可以从某个拼搭开始，然后使用下一个或上一个按钮通过相应的通道。或者以MP3播放器或电视机为例，你可以按下一个和上一个按钮来浏览连续的频道，或者换句话说，它们都提供了一个界面来迭代各个频道、歌曲或电台。
+
+又比如说列表和数组的遍历方式不同,你可以用迭代器模式把他们封装成一致的使用方式.
+
+#### 简单总结
+
+**迭代器模式**是一种行为设计模式 让你能在不暴露集合底层表现形式 （列表、 栈和树等） 的情况下遍历集合中所有的元素。
+
+#### 维基百科的解释
+
+在面向对象编程中，迭代器模式是一种设计模式，其中迭代器用于遍历容器并访问容器的元素。迭代器模式将算法与容器解耦;在某些情况下，算法必须是特定于容器的，因此不能解耦。
+
+#### 优缺点
+
+**优点**
+
+-  *单一职责原则*。 通过将体积庞大的遍历算法代码抽取为独立的类， 你可对客户端代码和集合进行整理。
+-  *开闭原则*。 你可实现新型的集合和迭代器并将其传递给现有代码， 无需修改现有代码。
+-  你可以并行遍历同一集合， 因为每个迭代器对象都包含其自身的遍历状态。
+-  相似的， 你可以暂停遍历并在需要时继续。
+
+**缺点**
+
+-  如果你的程序只与简单的集合进行交互， 应用该模式可能会矫枉过正。
+-  对于某些特殊集合， 使用迭代器可能比直接遍历的效率低。
+
+#### typescript example
+
+```typescript
+/**
+ * Iterator Design Pattern
+ *
+ * Intent: Lets you traverse elements of a collection without exposing its
+ * underlying representation (list, stack, tree, etc.).
+ */
+
+interface Iterator<T> {
+  // Return the current element.
+  current(): T
+
+  // Return the current element and move forward to next element.
+  next(): T
+
+  // Return the key of the current element.
+  key(): number
+
+  // Checks if current position is valid.
+  valid(): boolean
+
+  // Rewind the Iterator to the first element.
+  rewind(): void
+}
+
+interface Aggregator {
+  // Retrieve an external iterator.
+  getIterator(): Iterator<string>
+}
+
+/**
+ * Concrete Iterators implement various traversal algorithms. These classes
+ * store the current traversal position at all times.
+ */
+
+class AlphabeticalOrderIterator implements Iterator<string> {
+  private collection: WordsCollection
+
+  /**
+   * Stores the current traversal position. An iterator may have a lot of
+   * other fields for storing iteration state, especially when it is supposed
+   * to work with a particular kind of collection.
+   */
+  private position: number = 0
+
+  /**
+   * This variable indicates the traversal direction.
+   */
+  private reverse: boolean = false
+
+  constructor(collection: WordsCollection, reverse: boolean = false) {
+    this.collection = collection
+    this.reverse = reverse
+
+    if (reverse) {
+      this.position = collection.getCount() - 1
+    }
+  }
+
+  public rewind() {
+    this.position = this.reverse ? this.collection.getCount() - 1 : 0
+  }
+
+  public current(): string {
+    return this.collection.getItems()[this.position]
+  }
+
+  public key(): number {
+    return this.position
+  }
+
+  public next(): string {
+    const item = this.collection.getItems()[this.position]
+    this.position += this.reverse ? -1 : 1
+    return item
+  }
+
+  public valid(): boolean {
+    if (this.reverse) {
+      return this.position >= 0
+    }
+
+    return this.position < this.collection.getCount()
+  }
+}
+
+/**
+ * Concrete Collections provide one or several methods for retrieving fresh
+ * iterator instances, compatible with the collection class.
+ */
+class WordsCollection implements Aggregator {
+  private items: string[] = []
+
+  public getItems(): string[] {
+    return this.items
+  }
+
+  public getCount(): number {
+    return this.items.length
+  }
+
+  public addItem(item: string): void {
+    this.items.push(item)
+  }
+
+  public getIterator(): Iterator<string> {
+    return new AlphabeticalOrderIterator(this)
+  }
+
+  public getReverseIterator(): Iterator<string> {
+    return new AlphabeticalOrderIterator(this, true)
+  }
+}
+
+/**
+ * The client code may or may not know about the Concrete Iterator or Collection
+ * classes, depending on the level of indirection you want to keep in your
+ * program.
+ */
+const collection = new WordsCollection()
+collection.addItem('First')
+collection.addItem('Second')
+collection.addItem('Third')
+
+const iterator = collection.getIterator()
+
+console.log('Straight traversal:')
+while (iterator.valid()) {
+  console.log(iterator.next())
+}
+
+console.log('')
+console.log('Reverse traversal:')
+const reverseIterator = collection.getReverseIterator()
+while (reverseIterator.valid()) {
+  console.log(reverseIterator.next())
+}
+```
+
+
+
