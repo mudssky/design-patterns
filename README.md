@@ -2457,3 +2457,67 @@ paypal.setNext(bitcoin)
 bank.pay(259)
 ```
 
+### 8.👽中介者模式(Mediator)
+
+**亦称：** 调解人、控制器、Intermediary、Controller
+
+#### 现实的例子
+
+一个一般的例子是，当你用手机和某人交谈时，有一个网络提供商坐在你和他们之间，你的谈话经过它而不是直接发送。在这种情况下，网络提供者是中介。
+
+#### 简单总结
+
+**中介者模式**是一种行为设计模式， 能让你减少对象之间混乱无序的依赖关系。 该模式会限制对象之间的直接交互， 迫使它们通过一个中介者对象进行合作。
+
+#### 优缺点
+
+**优点**
+
+- *单一职责原则*。 你可以将多个组件间的交流抽取到同一位置， 使其更易于理解和维护。
+-  *开闭原则*。 你无需修改实际组件就能增加新的中介者。
+-  你可以减轻应用中多个组件间的耦合情况。
+-  你可以更方便地复用各个组件。
+
+**缺点**
+
+一段时间后， 中介者可能会演化成为 **上帝对象**（中介者本身会过于复杂）。
+
+#### typescript example
+
+```typescript
+interface ChatRoomMediator {
+  showMessage(user: User, message: string): void
+}
+
+class ChatRoom implements ChatRoomMediator {
+  showMessage(user: User, message: string): void {
+    const time = new Date().toUTCString()
+    const sender = user.getName()
+    console.log(`${time}[${sender}]:${message}`)
+  }
+}
+
+class User {
+  protected name: string
+  protected chatMediator: ChatRoomMediator
+  constructor(name: string, chatMediator: ChatRoomMediator) {
+    this.name = name
+    this.chatMediator = chatMediator
+  }
+  getName() {
+    return this.name
+  }
+  send(message: string) {
+    this.chatMediator.showMessage(this, message)
+  }
+}
+
+const mediator = new ChatRoom()
+
+const john = new User('John Doe', mediator)
+const jane = new User('Jane Doe', mediator)
+
+john.send('hi,its me')
+jane.send('hey!')
+```
+
