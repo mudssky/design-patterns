@@ -553,7 +553,7 @@ const burger = new BurgerBuilder(14).addCheese().addPepperoni().build()
 
 ```
 
-## 6.🐑原型模式(Prototype)
+### 6.🐑原型模式(Prototype)
 
 **亦称：** 克隆、Clone
 
