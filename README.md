@@ -1097,7 +1097,7 @@ door.open('123456')
 door.close()
 ```
 
-### 6🚡 桥接模式(Bridge)
+### 6.🚡 桥接模式(Bridge)
 
 #### 现实的例子
 
@@ -1202,6 +1202,79 @@ const careers = new Careers(darkTheme)
 console.log(about.getContent())
 console.log(careers.getContent())
 
+```
+
+### 7.🍃享元模式(Flyweight)
+
+**亦称：** 缓存、Cache
+
+#### 现实的例子
+
+你在什么摊位上喝过新鲜的茶吗?他们通常会制作不止一个杯子，除了你使用的那个，剩下的留给其他客户，以节省资源。Flyweight模式就是关于资源共享的。
+
+#### 简单总结
+
+**享元模式**是一种结构型设计模式， 它摒弃了在每个对象中保存所有数据的方式， 通过共享多个对象所共有的相同状态， 让你能在有限的内存容量中载入更多对象。
+
+#### 维基百科的解释
+
+在计算机编程中，flyweight是一种软件设计模式。flyweight是通过与其他类似对象共享尽可能多的数据来最小化内存使用的对象;当一个简单的重复表示将使用不可接受的内存量时，它是一种大量使用对象的方法
+
+#### 优缺点
+
+**优点**
+
+-  如果程序中有很多相似对象， 那么你将可以节省大量内存。
+
+**缺点**
+
+- 你可能需要牺牲执行速度来换取内存， 因为他人每次调用享元方法时都需要重新计算部分情景数据。
+-  代码会变得更加复杂。 团队中的新成员总是会问：  “为什么要像这样拆分一个实体的状态？”。
+
+#### typescript example
+
+```typescript
+class KaraTea {}
+
+interface Tea {
+  [key: string]: KaraTea
+}
+interface Order {
+  [key: number]: KaraTea
+}
+class TeaMaker {
+  protected availableTea: Tea = {}
+  make(preference: string) {
+    if (!this.availableTea[preference]) {
+      this.availableTea[preference] = new KaraTea()
+    }
+    return this.availableTea[preference]
+  }
+}
+
+class Teashop {
+  protected orders: Order = {}
+  protected teaMaker: TeaMaker
+  constructor(teaMaker: TeaMaker) {
+    this.teaMaker = teaMaker
+  }
+  takeOrder(teaType: string, table: number) {
+    this.orders[table] = this.teaMaker.make(teaType)
+  }
+  server() {
+    for (const key in this.orders) {
+      console.log(`Serving Tea to table#${key} `)
+    }
+  }
+}
+
+const teaMaker = new TeaMaker()
+const shop = new Teashop(teaMaker)
+
+shop.takeOrder('less sugar', 1)
+shop.takeOrder('more milk', 2)
+shop.takeOrder('without sugar', 5)
+shop.server()
 ```
 
 
@@ -2043,7 +2116,7 @@ iosBuilder.build()
 
 ```
 
-### 5.迭代器模式➿ (Iterator)
+### 5.➿迭代器模式 (Iterator)
 
 #### 现实的例子
 
@@ -2328,3 +2401,59 @@ editor.type('2')
 -  部分请求可能未被处理。
 
 #### typescript example
+
+```typescript
+abstract class Account {
+  protected successor: Account | null = null
+  protected abstract balance: number
+  setNext(account: Account) {
+    this.successor = account
+  }
+  pay(amountToPay: number) {
+    if (this.canPay(amountToPay)) {
+      console.log(`paid ${amountToPay} using ${this.constructor.toString()}`)
+    } else if (this.successor) {
+      console.log('cant pay ,using next...')
+      this.successor.pay(amountToPay)
+    } else {
+      throw new Error('None of the accounts have enough balance')
+    }
+  }
+  canPay(amount: number): boolean {
+    return this.balance >= amount
+  }
+}
+
+class Bank extends Account {
+  protected balance: number
+  constructor(balance: number) {
+    super()
+    this.balance = balance
+  }
+}
+
+class Paypal extends Account {
+  protected balance: number
+  constructor(balance: number) {
+    super()
+    this.balance = balance
+  }
+}
+
+class Bitcoin extends Account {
+  protected balance: number
+  constructor(balance: number) {
+    super()
+    this.balance = balance
+  }
+}
+
+const bank = new Bank(100)
+const paypal = new Paypal(200)
+const bitcoin = new Bitcoin(300)
+
+bank.setNext(paypal)
+paypal.setNext(bitcoin)
+bank.pay(259)
+```
+
