@@ -82,6 +82,8 @@ door2.deescribe()
 
 ### 2.🏭工厂方法模式(Factory Method)
 
+**亦称：** 虚拟构造函数、Virtual Constructor
+
 #### 现实的例子
 
 考虑一个HR招人面试的例子,不可能每个职位都由一个人来面试。根据职位空缺，她必须决定并把面试步骤委派给不同的人。
@@ -425,6 +427,8 @@ export {}
 
 ### 4.💍单例模式(Singleton)
 
+**亦称：** 单件模式
+
 ### 现实的例子
 
 一个国家只能有一个总统，总统始终是一个。
@@ -594,6 +598,8 @@ export{}
 
 ### 2.🔌 适配器模式(Adapter)
 
+**亦称：** 封装器模式、Wrapper
+
 #### 现实的例子
 
 考虑到你的记忆卡中有一些图片，你需要把它们转移到你的电脑上。为了传输它们，你需要某种适配器，它与你的计算机端口兼容，这样你就可以把存储卡连接到你的计算机上。在这种情况下，读卡器是一个适配器。另一个例子是著名的电源适配器;三脚插头不能连接到两个尖头插座，它需要使用电源适配器，使其兼容两个尖头插座。还有一个例子是译者将一个人说的话翻译给另一个人
@@ -664,6 +670,82 @@ const wildDogAdapter = new WildDogAdapter(wildDog)
 const hunter = new Hunter()
 hunter.hunt(wildDogAdapter)
 
+```
+
+### 3.📦 外观模式(Facade)
+
+**亦称：**门面模式
+
+#### 现实的例子
+
+(这台电脑怎么开机?)你会说“按电源按钮”!这就是你所相信的，因为你使用的是计算机提供的一个简单的界面，内部它需要做很多事情来实现它。这个到复杂子系统的简单接口就是facade。
+
+#### 简单总结
+
+Facade模式为复杂的子系统提供了简化的接口。
+
+#### 维基百科的描述
+
+facade是一个对象，它为更大的代码体(如类库)提供了简化的接口。
+
+#### 优缺点
+
+**优点**
+
+- 你可以让自己的代码独立于复杂子系统。
+
+**缺点**
+
+-  外观可能成为与程序中所有类都耦合的[上帝对象](https://refactoringguru.cn/antipatterns/god-object)(指的是了解过多,或者负责过多的对象)。
+
+#### typescript example
+
+```typescript
+class Computer {
+  // 断电
+  getElectricShock() {
+    console.log('Ouch')
+  }
+  makeSound() {
+    console.log('Beep beep!')
+  }
+  showLoadingScreen() {
+    console.log('Loading...')
+  }
+  bam() {
+    console.log('Ready to be used')
+  }
+  closeEverything() {
+    console.log('Bup bup bup buzzzz!')
+  }
+  sooth() {
+    console.log('Zzzzz')
+  }
+  pullCurrent() {
+    console.log('Haaah!')
+  }
+}
+class ComputerFacade {
+  protected computer
+  constructor(computer: Computer) {
+    this.computer = computer
+  }
+  turnOn() {
+    this.computer.getElectricShock()
+    this.computer.makeSound()
+    this.computer.showLoadingScreen()
+    this.computer.bam()
+  }
+  turnOff() {
+    this.computer.closeEverything()
+    this.computer.pullCurrent()
+    this.computer.sooth()
+  }
+}
+
+const computer = new ComputerFacade(new Computer())
+computer.turnOn()
+computer.turnOff()
 ```
 
 
@@ -1313,7 +1395,9 @@ func main() {
 
 
 
-### 3.👮命令模式 Command
+### 3.👮命令模式(Command)
+
+**亦称：** 动作、事务、Action、Transaction
 
 #### 真实世界的例子
 
@@ -1407,6 +1491,98 @@ const turnOff = new TurnOff(bulb)
 const remote = new RemoteControl()
 remote.submit(turnOn)
 remote.submit(turnOff)
+
+```
+
+### 4.📒 模板方法(Template Method)
+
+#### 真实世界的例子
+
+假设我们要建房子。建造的步骤可能像这样
+
+- 准备好房子的地基
+
+- 构建墙
+
+- 添加屋顶
+
+- 添加其他楼层
+
+这些步骤的顺序永远不会改变，例如，你不能在建造墙壁之前建造屋顶，但每个步骤都可以修改，例如，墙壁可以由木材、聚酯或石头制成。
+
+#### 简单总结
+
+模板方法定义了如何执行某个算法的框架，但将这些步骤的实现推迟到子类。
+
+#### 维基百科的描述
+
+在软件工程中，模板方法模式是一种行为设计模式，它在操作中定义算法的程序框架，将一些步骤推迟到子类中。它允许人们在不改变算法结构的情况下重新定义算法的某些步骤。
+
+#### 优缺点
+
+**优点**
+
+-  你可仅允许客户端重写一个大型算法中的特定部分， 使得算法其他部分修改对其所造成的影响减小。
+-  你可将重复代码提取到一个超类中。
+
+**缺点**
+
+-  部分客户端可能会受到算法框架的限制。
+-  通过子类抑制默认步骤实现可能会导致违反_里氏替换原则_(即派生类可以在程序中替换基类对象)。
+-  模板方法中的步骤越多， 其维护工作就可能会越困难。
+
+#### typescript example
+
+假设我们有一个构建工具，可以帮助我们测试、lint、构建、生成构建报告(即代码覆盖报告、linting报告等)，并将我们的应用部署到测试服务器上。首先，我们有为构建算法指定骨架的基类
+
+```typescript
+abstract class Builder {
+  build() {
+    this.test()
+    this.lint()
+    this.assemble()
+    this.deploy()
+  }
+  abstract test(): void
+  abstract lint(): void
+  abstract assemble(): void
+  abstract deploy(): void
+}
+
+class AndroidBuilder extends Builder {
+  test(): void {
+    console.log('Running android test')
+  }
+  lint(): void {
+    console.log('Linting the android code.')
+  }
+  assemble(): void {
+    console.log('Assembling the andorid build.')
+  }
+  deploy(): void {
+    console.log('Deploying android build to server')
+  }
+}
+
+class IosBuilder extends Builder {
+  test(): void {
+    console.log('Running ios test')
+  }
+  lint(): void {
+    console.log('Linting the ios code.')
+  }
+  assemble(): void {
+    console.log('Assembling the ios build.')
+  }
+  deploy(): void {
+    console.log('Deploying ios build to server')
+  }
+}
+
+const androidBuilder = new AndroidBuilder()
+androidBuilder.build()
+const iosBuilder = new IosBuilder()
+iosBuilder.build()
 
 ```
 
