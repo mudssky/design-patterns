@@ -941,6 +941,86 @@ clientCode2(tree, simple)
 
 ```
 
+### 5.🎱 代理模式(Proxy)
+
+#### 现实的例子
+
+你用过门禁卡进出一扇门吗?开门有多种选择，比如，可以使用门禁卡打开，也可以通过按下绕过安全的按钮打开。门的主要功能是打开，但在上面添加了一个代理来添加一些功能。让我用下面的代码示例更好地解释它。
+
+信用卡是银行账户的代理， 银行账户则是一大捆现金的代理。 它们都实现了同样的接口， 均可用于进行支付。 消费者会非常满意， 因为不必随身携带大量现金； 商店老板同样会十分高兴， 因为交易收入能以电子化的方式进入商店的银行账户中， 无需担心存款时出现现金丢失或被抢劫的情况。
+
+#### 简单总结
+
+**代理模式**是一种结构型设计模式， 让你能够提供对象的替代品或其占位符。 代理控制着对于原对象的访问， 并允许在将请求提交给对象前后进行一些处理。
+
+#### 优缺点
+
+**优点**
+
+-  你可以在客户端毫无察觉的情况下控制服务对象。
+-  如果客户端对服务对象的生命周期没有特殊要求， 你可以对生命周期进行管理。
+-  即使服务对象还未准备好或不存在， 代理也可以正常工作。
+-  *开闭原则*。 你可以在不对服务或客户端做出修改的情况下创建新代理。
+
+**缺点**
+
+- 代码可能会变得复杂， 因为需要新建许多类。
+-  服务响应可能会延迟。
+
+#### 与其他模式的联系
+
+- 适配器模式能为被封装对象提供不同的接口， 代理模式能为对象提供相同的接口， 装饰模式则能为对象提供加强的接口。
+
+- 外观模式与代理的相似之处在于它们都缓存了一个复杂实体并自行对其进行初始化。 代理与其服务对象遵循同一接口， 使得自己和服务对象可以互换， 在这一点上它与外观不同。
+
+- 装饰和代理有着相似的结构， 但是其意图却非常不同。 这两个模式的构建都基于组合原则， 也就是说一个对象应该将部分工作委派给另一个对象。 两者之间的不同之处在于代理通常自行管理其服务对象的生命周期， 而装饰的生成则总是由客户端进行控制。
+
+#### typescript example
+
+```typescript
+interface Door {
+  open(): void
+  close(): void
+}
+
+class LabDoor implements Door {
+  open(): void {
+    console.log('opening the lab door')
+  }
+  close(): void {
+    console.log('closing the lab door')
+  }
+}
+
+class SecuredDoor {
+  protected door: Door
+  protected password = '123456'
+  constructor(door: Door) {
+    this.door = door
+  }
+  open(password: string) {
+    if (this.authenticate(password)) {
+      this.door.open()
+    } else {
+      console.log('No,you cant open this door')
+    }
+  }
+
+  authenticate(passwords: string) {
+    return this.password == passwords
+  }
+  close() {
+    this.door.close()
+  }
+}
+
+const door = new SecuredDoor(new LabDoor())
+
+door.open('1234567')
+door.open('123456')
+door.close()
+```
+
 
 
 ## 行为设计模式
