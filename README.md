@@ -1314,13 +1314,13 @@ door.close()
 
 假设你有一个有不同页面的网站，你应该允许用户更改主题。你会怎么做?为每个主题创建每个页面的多个副本，还是只创建单独的主题并根据用户的偏好加载它们?桥牌模式允许你做后者，如下图
 
-![With and without the bridge pattern](assets/bridge.png)
+![With and without the bridge pattern](assets/bridge-2abe760d08970fcef2f3eb211b40ca9a.png)
 
 
 
 假如你有一个几何 `形状`Shape类， 从它能扩展出两个子类：  `圆形`Circle和 `方形`Square 。 你希望对这样的类层次结构进行扩展以使其包含颜色， 所以你打算创建名为 `红色`Red和 `蓝色`Blue的形状子类。 但是， 由于你已有两个子类， 所以总共需要创建四个类才能覆盖所有组合， 例如 `蓝色圆形`Blue­Circle和 `红色方形`Red­Square 。
 
-![桥接模式解决的问题](assets/problem-zh-1626081144583.png)
+![桥接模式解决的问题](assets/bridge-problem-f3bb0dbe9d551b3aceb6172681b4e124.png)
 
 所有组合类的数量将以几何级数增长。
 
@@ -1330,7 +1330,7 @@ door.close()
 
 桥接模式通过将继承改为组合的方式来解决这个问题。 具体来说， 就是抽取其中一个维度并使之成为独立的类层次， 这样就可以在初始类中引用这个新层次的对象， 从而使得一个类不必拥有所有的状态和行为。
 
-![桥接模式的解决方案](assets/solution-zh.png)
+![桥接模式的解决方案](assets/bridge-solution-c96115c7cb06311d8e5df8b133c306c7.png)
 
 将一个类层次转化为多个相关的类层次， 避免单个类层次的失控。
 
